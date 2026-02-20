@@ -21,7 +21,11 @@ class MoviedbDatasource extends MoviesDatasource {
 
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
-    final response = await dio.get('/movie/now_playing');
+    final response = await dio.get('/movie/now_playing',
+    //Parámetros para obtener las películas de acuerdo al número de página
+    queryParameters: {
+      'page': page
+    });
     final movieDbResponse = MovieDbResponse.fromJson(response.data);
 
     final List<Movie> movies = movieDbResponse.results
