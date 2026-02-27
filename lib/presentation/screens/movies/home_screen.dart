@@ -54,7 +54,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
         SliverAppBar( //SliverAppBar será la appbar que tendrá el scrollview
           floating: true, //Ponemos que sea flotante para que al hacer scroll de regreso, se vuelva a mostrar
           flexibleSpace: FlexibleSpaceBar(title: CustomAppbar()), //El componente que mostraremos (nuestro custom appbar)
-          shadowColor: colors.primary,
+          // shadowColor: colors.primary,
         ),
         SliverList(
           //El contenido que queremos mostrar
