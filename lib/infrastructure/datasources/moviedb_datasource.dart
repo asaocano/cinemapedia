@@ -86,4 +86,17 @@ class MoviedbDatasource extends MoviesDatasource {
 
     return movie;
   }
+
+  @override
+  Future<List<Movie>> searchMovies(String query) async {
+    if (query.isEmpty) return [];
+
+    final response = await dio.get(
+      '/search/movie',
+      //Parámetros para obtener las películas de acuerdo al número de página
+      queryParameters: {'query': query},
+    );
+
+    return _jsonToMovies(response.data);
+  }
 }

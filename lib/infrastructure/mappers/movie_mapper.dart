@@ -21,7 +21,7 @@ class MovieMapper {
     popularity: moviedb.popularity,
     posterPath: moviedb.posterPath != ""
         ? "https://image.tmdb.org/t/p/w500${moviedb.posterPath}"
-        : 'no-poster',
+        : 'https://media.istockphoto.com/id/1055079680/vector/black-linear-photo-camera-like-no-image-available.jpg?s=612x612&w=0&k=20&c=P1DebpeMIAtXj_ZbVsKVvg-duuL0v9DlrOZUvPG6UJk=',
     releaseDate: moviedb.releaseDate,
     title: moviedb.title,
     video: moviedb.video,
@@ -40,7 +40,7 @@ class MovieMapper {
     originalTitle: movie.originalTitle,
     overview: movie.overview,
     popularity: movie.popularity,
-    posterPath: movie.posterPath != ""
+    posterPath: (movie.posterPath != "")
         ? "https://image.tmdb.org/t/p/w500${movie.posterPath}"
         : 'https://media.istockphoto.com/id/1055079680/vector/black-linear-photo-camera-like-no-image-available.jpg?s=612x612&w=0&k=20&c=P1DebpeMIAtXj_ZbVsKVvg-duuL0v9DlrOZUvPG6UJk=',
     releaseDate: movie.releaseDate,
