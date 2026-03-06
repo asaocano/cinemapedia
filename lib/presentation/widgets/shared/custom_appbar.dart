@@ -51,7 +51,7 @@ class CustomAppbar extends ConsumerWidget {
 
                       if (!context.mounted) return; //* Verifica que el widget siga montado después del await para evitar errores al navegar
 
-                      context.push('/movie/${movie.id}'); //* Si se selecciona una película de la lista, se envía a la pantalla que muestra los detalles de la película
+                      context.push('/home/0/movie/${movie.id}'); //* Si se selecciona una película de la lista, se envía a la pantalla que muestra los detalles de la película
                     },
                     icon: Icon(Icons.search),
                   ),
