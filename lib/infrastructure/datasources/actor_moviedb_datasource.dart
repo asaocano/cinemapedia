@@ -5,6 +5,11 @@ import 'package:cinemapedia/infrastructure/mappers/actor_mapper.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/credits_cresponse.dart';
 import 'package:dio/dio.dart';
 
+/*
+Es la representación real de los métodos definidos en domain, implementando 
+cómo obtener y preparar los datos para que el dominio pueda usarlos sin 
+preocuparse por el origen.
+ */
 class ActorMoviedbDatasource extends ActorsDatasource {
   //Instancia base para realizar peticiones
   final dio = Dio(
@@ -14,6 +19,7 @@ class ActorMoviedbDatasource extends ActorsDatasource {
     ),
   );
 
+//Se sobreescribe el método del datasource para obtener los actores de una película
   @override
   Future<List<Actor>> getActorsByMovie(String movieId) async {
     final response = await dio.get('/movie/$movieId/credits');

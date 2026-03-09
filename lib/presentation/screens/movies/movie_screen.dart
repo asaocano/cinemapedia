@@ -67,6 +67,17 @@ class _CustomSliverAppBar extends StatelessWidget {
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
+      actions: [
+        //Botón para marcar como favorito
+        IconButton(
+          onPressed: () {},
+          icon: //Icon(Icons.favorite_border_rounded)
+          Icon(
+            Icons.favorite,
+            color: Colors.red,
+          ),
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         // title: Text(
@@ -89,28 +100,25 @@ class _CustomSliverAppBar extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.7, 1.0],
-                    colors: [Colors.transparent, Colors.black87],
-                  ),
-                ),
-              ),
+            //Sombra al final del poster
+            const _CustomGradient(
+              inicio: Alignment.topCenter,
+              fin: Alignment.bottomCenter,
+              stops: [0.7, 1.0],
+              colores: [Colors.transparent, Colors.black87],
             ),
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    stops: [0.0, 0.3],
-                    colors: [Colors.black87, Colors.transparent],
-                  ),
-                ),
-              ),
+            //Sombra al botón de regreso
+            const _CustomGradient(
+              inicio: Alignment.topLeft,
+              stops: [0.0, 0.3],
+              colores: [Colors.black87, Colors.transparent],
+            ),
+            //Sombra al botón favoritos
+            const _CustomGradient(
+              inicio: Alignment.topRight,
+              fin: Alignment.bottomLeft,
+              stops: [0.0, 0.3],
+              colores: [Colors.black87, Colors.transparent],
             ),
           ],
         ),
@@ -261,6 +269,37 @@ class _ActorsByMovie extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+//Componente para añadir un gradiente
+class _CustomGradient extends StatelessWidget {
+  final AlignmentGeometry inicio;
+  final AlignmentGeometry fin;
+  final List<double> stops;
+  final List<Color> colores;
+
+  const _CustomGradient({
+    this.inicio = Alignment.topCenter,
+    this.fin = Alignment.centerRight,
+    required this.stops,
+    required this.colores,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: inicio,
+            end: fin,
+            stops: stops,
+            colors: colores,
+          ),
+        ),
       ),
     );
   }

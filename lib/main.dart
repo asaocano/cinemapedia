@@ -4,7 +4,27 @@ import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cinemapedia/config/database/database.dart';
+
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //Se agrega soporte para drift (db local)
+
+  // await db
+  //     .into(db.favoriteMovies)
+  //     .insert(
+  //       FavoriteMoviesCompanion.insert(
+  //         movieId: 1,
+  //         backdropPath: 'backdropPath.png',
+  //         originalTitle: 'originalTitle',
+  //         posterPath: 'posterPath.png',
+  //         title: 'title',
+  //       ),
+  //     );
+  // final deleteQuery = db.delete(db.favoriteMovies);
+  // await deleteQuery.go();
+
+  // final movies = await db.select(db.favoriteMovies).get();
+
   await dotenv.load(fileName: ".env");
   runApp(const ProviderScope(child: MainApp()));
 }
