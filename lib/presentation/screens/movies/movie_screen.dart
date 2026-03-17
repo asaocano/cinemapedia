@@ -4,6 +4,8 @@ import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/providers/actors/actors_repository_provider.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
+import 'package:cinemapedia/presentation/stores/favorite_movies_provider.dart';
+import 'package:cinemapedia/presentation/stores/is_favorite_movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,13 +57,16 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
 
   const _CustomSliverAppBar({required this.movie});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
+    final favoriteMovies = ref.watch(favoriteMoviesProvider);
+    final isFavorite = favoriteMovies.containsKey(movie.id);
 
     return SliverAppBar(
       backgroundColor: Colors.black,
@@ -70,12 +75,14 @@ class _CustomSliverAppBar extends StatelessWidget {
       actions: [
         //Botón para marcar como favorito
         IconButton(
-          onPressed: () {},
-          icon: //Icon(Icons.favorite_border_rounded)
-          Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
+          onPressed: () {
+            ref
+                .read(favoriteMoviesProvider.notifier)
+                .toggleFavoriteMovie(movie);
+          },
+          icon: isFavorite
+              ? const Icon(Icons.favorite, color: Colors.red)
+              : const Icon(Icons.favorite_border_rounded),
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(

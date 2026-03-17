@@ -11,7 +11,7 @@ class HumanFormat {
 
   static String scoreTransform(double number){
     return NumberFormat.compactCurrency(
-      decimalDigits: 2,
+      decimalDigits: 1,
       symbol: '',
       locale: 'en-US'
     ).format(number);
