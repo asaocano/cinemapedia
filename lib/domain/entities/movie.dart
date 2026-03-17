@@ -1,3 +1,8 @@
+/*
+Clase que representa una película dentro del dominio de la aplicación, independiente de la API.
+Define qué propiedades y tipos debe tener una película según las reglas del negocio.
+No sabe de dónde vienen los datos; otras capas se encargan de adaptar la información externa a este formato.
+*/
 class Movie {
   final bool adult;
   final String backdropPath;
@@ -8,7 +13,7 @@ class Movie {
   final String overview;
   final double popularity;
   final String posterPath;
-  final DateTime releaseDate;
+  final DateTime? releaseDate;
   final String title;
   final bool video;
   final double voteAverage;

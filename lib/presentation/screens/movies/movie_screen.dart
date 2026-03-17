@@ -1,0 +1,313 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/helpers/human_format.dart';
+import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/providers/actors/actors_repository_provider.dart';
+import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
+import 'package:cinemapedia/presentation/stores/favorite_movies_provider.dart';
+import 'package:cinemapedia/presentation/stores/is_favorite_movie_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class MovieScreen extends ConsumerStatefulWidget {
+  static const name = 'movie-screen';
+  final String movieId;
+
+  const MovieScreen({super.key, required this.movieId});
+
+  @override
+  MovieScreenState createState() => MovieScreenState();
+}
+
+class MovieScreenState extends ConsumerState<MovieScreen> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(movieInfoProvider.notifier).loadMovie(widget.movieId);
+    ref.read(actorsByMovieProvider.notifier).loadActors(widget.movieId);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Movie? movie = ref.watch(movieInfoProvider)[widget.movieId];
+
+    if (movie == null) {
+      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+    }
+
+    return Scaffold(
+      body: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          _CustomSliverAppBar(movie: movie),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _MovieDetails(movie: movie),
+              childCount: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CustomSliverAppBar extends ConsumerWidget {
+  final Movie movie;
+
+  const _CustomSliverAppBar({required this.movie});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
+    final favoriteMovies = ref.watch(favoriteMoviesProvider);
+    final isFavorite = favoriteMovies.containsKey(movie.id);
+
+    return SliverAppBar(
+      backgroundColor: Colors.black,
+      expandedHeight: size.height * 0.7,
+      foregroundColor: Colors.white,
+      actions: [
+        //Botón para marcar como favorito
+        IconButton(
+          onPressed: () {
+            ref
+                .read(favoriteMoviesProvider.notifier)
+                .toggleFavoriteMovie(movie);
+          },
+          icon: isFavorite
+              ? const Icon(Icons.favorite, color: Colors.red)
+              : const Icon(Icons.favorite_border_rounded),
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        // title: Text(
+        //   movie.title,
+        //   style: const TextStyle(color: Colors.white, fontSize: 20),
+        //   textAlign: TextAlign.left,
+        // ),
+        background: Stack(
+          children: [
+            SizedBox.expand(
+              child: Image.network(
+                movie.posterPath,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress != null) {
+                    return SizedBox();
+                  } else {
+                    return FadeIn(child: child);
+                  }
+                },
+              ),
+            ),
+            //Sombra al final del poster
+            const _CustomGradient(
+              inicio: Alignment.topCenter,
+              fin: Alignment.bottomCenter,
+              stops: [0.7, 1.0],
+              colores: [Colors.transparent, Colors.black87],
+            ),
+            //Sombra al botón de regreso
+            const _CustomGradient(
+              inicio: Alignment.topLeft,
+              stops: [0.0, 0.3],
+              colores: [Colors.black87, Colors.transparent],
+            ),
+            //Sombra al botón favoritos
+            const _CustomGradient(
+              inicio: Alignment.topRight,
+              fin: Alignment.bottomLeft,
+              stops: [0.0, 0.3],
+              colores: [Colors.black87, Colors.transparent],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MovieDetails extends StatelessWidget {
+  final Movie movie;
+  const _MovieDetails({required this.movie});
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  ClipRRect(
+                    //poster
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      movie.posterPath,
+                      width: size.width * 0.3,
+                    ),
+                  ),
+                  Padding(
+                    //Rating
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.star_half_outlined,
+                          color: Colors.yellow.shade800,
+                        ),
+                        Text(
+                          HumanFormat.scoreTransform(movie.voteAverage),
+                          style: textStyles.bodyMedium?.copyWith(
+                            color: Colors.yellow.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: (size.width - 40) * 0.7,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(movie.title, style: textStyles.titleLarge),
+                    Text(movie.overview),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        //Generos
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Wrap(
+            children: [
+              ...movie.genreIds.map(
+                (gender) => Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Chip(
+                    label: Text(gender),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        //Actores
+        _ActorsByMovie(movieId: movie.id.toString()),
+        const SizedBox(height: 50),
+      ],
+    );
+  }
+}
+
+class _ActorsByMovie extends ConsumerWidget {
+  final String movieId;
+  const _ActorsByMovie({required this.movieId});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final actorsByMovie = ref.watch(actorsByMovieProvider);
+
+    if (actorsByMovie[movieId] == null) {
+      return const CircularProgressIndicator(strokeWidth: 2);
+    }
+
+    final actors = actorsByMovie[movieId]!;
+    return SizedBox(
+      height: 300,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: actors.length,
+        itemBuilder: (context, index) {
+          final actor = actors[index];
+
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            width: 135,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //Foto
+                FadeInRight(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      actor.profilePath,
+                      height: 180,
+                      width: 135,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                //Nombre
+                const SizedBox(height: 5),
+                Text(actor.name, maxLines: 2),
+                Text(
+                  actor.character ?? '',
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+//Componente para añadir un gradiente
+class _CustomGradient extends StatelessWidget {
+  final AlignmentGeometry inicio;
+  final AlignmentGeometry fin;
+  final List<double> stops;
+  final List<Color> colores;
+
+  const _CustomGradient({
+    this.inicio = Alignment.topCenter,
+    this.fin = Alignment.centerRight,
+    required this.stops,
+    required this.colores,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: inicio,
+            end: fin,
+            stops: stops,
+            colors: colores,
+          ),
+        ),
+      ),
+    );
+  }
+}
