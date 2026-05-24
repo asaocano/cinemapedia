@@ -17,10 +17,10 @@ class CustomBottomNavigation extends StatelessWidget {
       currentIndex: currentIndex, //pestaña actual
       onTap: (value) => onItemTap(context, value),
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_max), label: 'Inicio'),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
         BottomNavigationBarItem(
-          icon: Icon(Icons.label_outline),
-          label: 'Categorías',
+          icon: Icon(Icons.local_fire_department_outlined),
+          label: 'Populares',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite_outline),

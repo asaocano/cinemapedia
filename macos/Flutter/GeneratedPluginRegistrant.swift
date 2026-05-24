@@ -5,8 +5,10 @@
 import FlutterMacOS
 import Foundation
 
+import flutter_inappwebview_macos
 import sqlite3_flutter_libs
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  InAppWebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "InAppWebViewFlutterPlugin"))
   Sqlite3FlutterLibsPlugin.register(with: registry.registrar(forPlugin: "Sqlite3FlutterLibsPlugin"))
 }

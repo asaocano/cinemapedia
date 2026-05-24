@@ -52,9 +52,9 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
 
   MoviesNotifier({required this.fetchMoreMovies}) : super([]);
 
-  Future<void> loadNextPage() async {
+  Future<List<Movie>> loadNextPage() async {
     if (isLoading) {
-      return;
+      return [];
     } else {
       isLoading = true;
       currentPage++;
@@ -63,6 +63,7 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
       state = [...state, ...movies];
       await Future.delayed(const Duration(milliseconds: 300));
       isLoading = false;
+      return movies;
     }
   }
 }

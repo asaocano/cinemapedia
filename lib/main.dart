@@ -3,8 +3,7 @@ import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:cinemapedia/config/database/database.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Se agrega soporte para drift (db local)
@@ -24,7 +23,7 @@ Future main() async {
   // await deleteQuery.go();
 
   // final movies = await db.select(db.favoriteMovies).get();
-
+  await initializeDateFormatting('es', null); //Se agrega soporte para formatear fechas en español
   await dotenv.load(fileName: ".env");
   runApp(const ProviderScope(child: MainApp()));
 }

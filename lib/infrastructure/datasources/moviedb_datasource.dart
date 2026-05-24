@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cinemapedia/config/constants/environment.dart';
+import 'package:cinemapedia/config/errors/errors.dart';
 import 'package:cinemapedia/domain/datasources/movies_datasource.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
@@ -15,7 +18,7 @@ class MoviedbDatasource extends MoviesDatasource {
   //Instancia base para realizar peticiones
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://api.themoviedb.org/3',
+      baseUrl: Environment.moviedbLink,
       queryParameters: {'api_key': Environment.movieDbKey, 'language': 'es-MX'},
     ),
   );
@@ -73,6 +76,35 @@ class MoviedbDatasource extends MoviesDatasource {
     );
 
     return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getSimilarMovies(String movieId) async {
+    try {
+      final response = await dio.get(
+        '/movie/$movieId/similar',
+        queryParameters: {'language': 'es-MX', 'page': 1},
+      );
+
+      return _jsonToMovies(response.data);
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw NetworkException();
+      }
+      if (e.error is SocketException) {
+        throw NetworkException();
+      }
+      if (e.response?.statusCode == 404) {
+        throw MovieNotFoundException();
+      }
+      if (e.response?.statusCode == 401) {
+        throw UnauthorizedException();
+      }
+
+      throw MovieDbException();
+    } catch (e) {
+      throw GeneralException();
+    }
   }
 
   @override
