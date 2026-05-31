@@ -10,6 +10,7 @@ import 'package:cinemapedia/presentation/stores/favorite_movies_provider.dart';
 import 'package:cinemapedia/presentation/stores/is_favorite_movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -406,6 +407,7 @@ class _SimilarMovies extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('También te podría gustar', style: textStyles.titleLarge),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: similarMovies.length,
@@ -448,7 +450,7 @@ class _MovieTrailer extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Trailer', style: textStyles.titleLarge,),
+          Text('Trailer', style: textStyles.titleLarge),
           YoutubePlayerBuilder(
             player: YoutubePlayer(
               controller: controller,
@@ -513,7 +515,9 @@ class _SimilarMovie extends StatelessWidget {
 
                     return GestureDetector(
                       child: FadeIn(child: child),
-                      onTap: () {},
+                      onTap: () {
+                        context.push('/home/0/movie/${movie.id}');
+                      },
                     );
                   },
                 ),
